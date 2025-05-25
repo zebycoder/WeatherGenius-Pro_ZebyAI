@@ -11,12 +11,7 @@ st.set_page_config(
     page_title="WeatherGenius Pro ☀️",
     page_icon="⛅",
     layout="wide",
-    initial_sidebar_state="expanded",
-    menu_items={
-        'Get Help': 'mailto:zeb.innerartinteriors@gmail.com',
-        'Report a bug': 'https://github.com/yourrepo/issues',
-        'About': "### AI-Powered Weather App by ZebyCoder"
-    }
+    initial_sidebar_state="expanded"
 )
 
 # ==================== CUSTOM CSS ====================
@@ -36,8 +31,17 @@ def inject_css():
             background: linear-gradient(to right, #6a11cb, #2575fc);
             color: white;
             border-radius: 10px;
-            margin-bottom: 2rem;
+            margin-bottom: 1rem;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        /* Welcome Box */
+        .welcome-box {
+            background: rgba(255,255,255,0.9);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
         
         /* Weather Cards */
@@ -115,6 +119,7 @@ def display_current_weather(data):
     st.markdown(f"""
     <div class="main-header">
         <h1>🌤️ Weather in {current['name']}, {current['sys']['country']}</h1>
+        <p>Created and developed by Jahanzaib Javed (AI Expert)</p>
     </div>
     """, unsafe_allow_html=True)
     
@@ -129,9 +134,10 @@ def display_current_weather(data):
         </div>
         """, unsafe_allow_html=True)
     
-    # Main Weather Metrics
+    # Main Weather Metrics - Always Expanded
     st.markdown("""
     <div class="weather-card">
+        <h3>Current Weather Details</h3>
         <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem;" class="metric-grid">
     """, unsafe_allow_html=True)
     
@@ -149,15 +155,22 @@ def display_current_weather(data):
     
     st.markdown("</div></div>", unsafe_allow_html=True)
     
-    # Additional Weather Data
-    with st.expander("Detailed Weather Information"):
-        cols = st.columns(2)
-        with cols[0]:
-            st.metric("☁️ Cloudiness", f"{current['clouds'].get('all', 'N/A')}%")
-            st.metric("👁️ Visibility", f"{current.get('visibility', 'N/A')} m")
-        with cols[1]:
-            st.metric("🌅 Sunrise", datetime.fromtimestamp(current['sys']['sunrise'], timezone).strftime('%H:%M'))
-            st.metric("🌇 Sunset", datetime.fromtimestamp(current['sys']['sunset'], timezone).strftime('%H:%M'))
+    # Additional Weather Data - Always Visible
+    st.markdown("""
+    <div class="weather-card">
+        <h3>Additional Weather Data</h3>
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+    """, unsafe_allow_html=True)
+    
+    cols = st.columns(2)
+    with cols[0]:
+        st.metric("☁️ Cloudiness", f"{current['clouds'].get('all', 'N/A')}%")
+        st.metric("👁️ Visibility", f"{current.get('visibility', 'N/A')} m")
+    with cols[1]:
+        st.metric("🌅 Sunrise", datetime.fromtimestamp(current['sys']['sunrise'], timezone).strftime('%H:%M'))
+        st.metric("🌇 Sunset", datetime.fromtimestamp(current['sys']['sunset'], timezone).strftime('%H:%M'))
+    
+    st.markdown("</div></div>", unsafe_allow_html=True)
 
 def display_forecast(data):
     st.markdown("""
@@ -252,11 +265,20 @@ def main():
     </div>
     """, unsafe_allow_html=True)
     
+    # Welcome Message (always visible at top)
+    st.markdown("""
+    <div class="welcome-box">
+        <h3>Welcome to WeatherGenius Pro!</h3>
+        <p>Get accurate weather forecasts and air quality data for any location worldwide.</p>
+        <p>Enter a city name below and click "Get Weather" or press Enter to begin.</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
     # Developer Info in Sidebar
     with st.sidebar:
         st.title("ZebyCoder Solutions")
         st.write("**Developed by:** Jahanzaib Javed")
-        st.write("**Specialization:** AI/ML & Full-Stack Development")
+        st.write("**Specialization:** AI/ML Solutions")
         st.write("📞 +92-300-5590321")
         st.write("✉ zeb.innerartinteriors@gmail.com")
         st.write("📧 zeb.javed1@outlook.com")
@@ -271,13 +293,16 @@ def main():
     # Main Content Area
     api_key = st.secrets.get("OPENWEATHER_API_KEY", "")
     
-    # City Input at Top of Main Page
-    city = st.text_input("Enter City Name", "Lahore", key="city_input")
+    # City Input with on-submit functionality
+    with st.form(key='weather_form'):
+        city = st.text_input("Enter City Name", "Lahore", key="city_input")
+        submit_button = st.form_submit_button("Get Weather", type="primary")
     
-    if st.button("Get Weather", type="primary", use_container_width=True):
+    # Trigger search on either Enter key or button click
+    if submit_button or city:
         if not api_key:
             st.error("API key missing in Streamlit Secrets!")
-        else:
+        elif city:  # Only search if city is not empty
             with st.spinner("Fetching the latest weather data..."):
                 weather_data = WeatherService.get_weather_data(city, api_key)
                 if weather_data:
@@ -298,16 +323,6 @@ def main():
                     st.map(map_data, zoom=10)
                 else:
                     st.error("Failed to fetch weather data. Please check the city name and try again.")
-
-    # Welcome Message (only shown before first search)
-    if not st.session_state.get('weather_data_fetched', False):
-        st.markdown("""
-        <div class="weather-card">
-            <h2>Welcome to WeatherGenius Pro!</h2>
-            <p>Get accurate weather forecasts and air quality data for any location worldwide.</p>
-            <p>Enter a city name above and click "Get Weather" to begin.</p>
-        </div>
-        """, unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()
