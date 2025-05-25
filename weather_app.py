@@ -1,12 +1,8 @@
-import pkg_resources
-try:
-    pkg_resources.require(open('requirements.txt').read().splitlines())
-except:
-    pass
-# ==================== STREAMLIT CLOUD FORCE-INSTALL ====================
-import subprocess, sys
-subprocess.run([sys.executable, "-m", "pip", "install", "--upgrade", "pip"], check=True)
-subprocess.run([sys.executable, "-m", "pip", "install", "--no-cache-dir", "-r", "requirements.txt"], check=True)
+# weather_app.py
+
+# REMOVE THESE LINES:
+# subprocess.run([sys.executable, "-m", "pip", "install", "--upgrade", "pip"], check=True)
+# subprocess.run([sys.executable, "-m", "pip", "install", "--no-cache-dir", "-r", "requirements.txt"], check=True)
 
 # ==================== MAIN IMPORTS ====================
 import streamlit as st
