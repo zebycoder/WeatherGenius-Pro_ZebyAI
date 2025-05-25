@@ -5,7 +5,20 @@ import plotly.express as px
 from datetime import datetime
 import pytz
 import base64
+# STREAMLIT CLOUD WORKAROUND - FORCE INSTALL
+import subprocess, sys, os
+subprocess.run([sys.executable, "-m", "pip", "install", "--upgrade", "pip"])
+subprocess.run([sys.executable, "-m", "pip", "install", "plotly==5.15.0", "numpy==1.24.4"])
 
+import streamlit as st
+import requests
+import pandas as pd
+import plotly.express as px  # Now guaranteed to work
+from datetime import datetime
+import pytz
+
+# REST OF YOUR APP CODE (keep all your existing functionality)
+# [Previous content from weather_app.py continues here...]
 # =============================================
 # APP CONFIGURATION
 # =============================================
