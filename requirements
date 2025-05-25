@@ -1,7 +1,0 @@
-streamlit==1.45.1  # Matches what Streamlit Cloud seems to be installing
-requests==2.32.3   # Matches what Streamlit Cloud seems to be installing
-pandas==2.2.3      # Matches what Streamlit Cloud seems to be installing
-plotly             # Remove the version pin for now, let it pick latest compatible
-python-dotenv==1.0.0
-pytz==2025.2       # Matches what Streamlit Cloud seems to be installing
-numpy==2.0.2       # Matches what Streamlit Cloud seems to be installing
