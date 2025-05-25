@@ -1,3 +1,8 @@
+import pkg_resources
+try:
+    pkg_resources.require(open('requirements.txt').read().splitlines())
+except:
+    pass
 # ==================== STREAMLIT CLOUD FORCE-INSTALL ====================
 import subprocess, sys
 subprocess.run([sys.executable, "-m", "pip", "install", "--upgrade", "pip"], check=True)
