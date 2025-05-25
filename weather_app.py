@@ -1,4 +1,3 @@
-# weather_app.py
 import streamlit as st
 import requests
 import pandas as pd
@@ -6,8 +5,7 @@ import plotly.express as px
 from datetime import datetime
 import pytz
 import base64
-# requirements.txt must be EXACTLY named and in root folder
-__import__('pkg_resources').require(open('requirements.txt').read())
+
 # =============================================
 # APP CONFIGURATION
 # =============================================
@@ -18,9 +16,8 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-
 # =============================================
-# CUSTOM CSS (Embedded - no separate file needed)
+# CUSTOM CSS (Full Version)
 # =============================================
 def inject_css():
     st.markdown(f"""
@@ -30,7 +27,7 @@ def inject_css():
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }}
-
+        
         /* Header Styling */
         .header {{
             background: linear-gradient(45deg, #6a11cb 0%, #2575fc 100%);
@@ -40,7 +37,7 @@ def inject_css():
             margin-bottom: 2rem;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }}
-
+        
         /* Card Styling */
         .weather-card {{
             background: rgba(255, 255, 255, 0.95);
@@ -49,7 +46,7 @@ def inject_css():
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             margin-bottom: 2rem;
         }}
-
+        
         /* Button Styling */
         .stButton>button {{
             background: linear-gradient(45deg, #6a11cb 0%, #2575fc 100%);
@@ -60,12 +57,12 @@ def inject_css():
             padding: 0.5rem 1rem;
             transition: all 0.3s ease;
         }}
-
+        
         .stButton>button:hover {{
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }}
-
+        
         /* Responsive Design */
         @media (max-width: 768px) {{
             .weather-card {{
@@ -78,9 +75,8 @@ def inject_css():
     </style>
     """, unsafe_allow_html=True)
 
-
 # =============================================
-# WEATHER DATA FUNCTIONS
+# WEATHER DATA FUNCTIONS (Complete)
 # =============================================
 @st.cache_data(ttl=3600)
 def get_weather_data(city, api_key):
@@ -109,15 +105,11 @@ def get_weather_data(city, api_key):
     except Exception:
         return None
 
-
-# =============================================
-# UI COMPONENTS
-# =============================================
 def show_current_weather(data):
     current = data["current"]
     weather = current["weather"][0]
     timezone = pytz.timezone("Asia/Karachi")
-
+    
     st.markdown(f"""
     <div class="weather-card">
         <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -127,37 +119,36 @@ def show_current_weather(data):
             </div>
             <img src="https://openweathermap.org/img/wn/{weather['icon']}@4x.png" width="120">
         </div>
-
+        
         <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-top: 1.5rem;">
             <div>
                 <h4 style="margin-bottom: 0.5rem;">🌡️ Temperature</h4>
                 <p style="font-size: 1.5rem; margin-top: 0;">{current['main']['temp']}°C</p>
                 <p>Feels like: {current['main']['feels_like']}°C</p>
             </div>
-
+            
             <div>
                 <h4 style="margin-bottom: 0.5rem;">💧 Humidity</h4>
                 <p style="font-size: 1.5rem; margin-top: 0;">{current['main']['humidity']}%</p>
             </div>
-
+            
             <div>
                 <h4 style="margin-bottom: 0.5rem;">🌬️ Wind</h4>
                 <p style="font-size: 1.5rem; margin-top: 0;">{current['wind']['speed']} m/s</p>
             </div>
-
+            
             <div>
                 <h4 style="margin-bottom: 0.5rem;">⏱️ Pressure</h4>
                 <p style="font-size: 1.5rem; margin-top: 0;">{current['main']['pressure']} hPa</p>
             </div>
         </div>
-
+        
         <div style="margin-top: 1.5rem;">
             <p>🌅 Sunrise: {datetime.fromtimestamp(current["sys"]["sunrise"], timezone).strftime("%H:%M")} 
             | 🌇 Sunset: {datetime.fromtimestamp(current["sys"]["sunset"], timezone).strftime("%H:%M")}</p>
         </div>
     </div>
     """, unsafe_allow_html=True)
-
 
 def show_forecast(data):
     forecast_items = []
@@ -171,13 +162,13 @@ def show_forecast(data):
             "Humidity": f"{item['main']['humidity']}%",
             "Wind": f"{item['wind']['speed']} m/s"
         })
-
+    
     st.markdown("""
     <div class="weather-card">
         <h2>📅 5-Day Forecast</h2>
     </div>
     """, unsafe_allow_html=True)
-
+    
     cols = st.columns(len(forecast_items))
     for idx, forecast in enumerate(forecast_items):
         with cols[idx]:
@@ -193,14 +184,12 @@ def show_forecast(data):
             </div>
             """, unsafe_allow_html=True)
 
-
 # =============================================
-# MAIN APP
+# MAIN APP (Complete)
 # =============================================
 def main():
-    inject_css()  # Inject our custom CSS
-
-    # Header with branding
+    inject_css()
+    
     st.markdown(f"""
     <div class="header">
         <h1 style="margin: 0; text-align: center;">WeatherGenius Pro ☀️</h1>
@@ -209,8 +198,7 @@ def main():
         </p>
     </div>
     """, unsafe_allow_html=True)
-
-    # Sidebar configuration
+    
     st.sidebar.image("https://via.placeholder.com/150x50/6a11cb/ffffff?text=ZebyCoder", use_column_width=True)
     st.sidebar.markdown("""
     <div style="text-align: center;">
@@ -221,26 +209,21 @@ def main():
     </div>
     """, unsafe_allow_html=True)
 
-    st.sidebar.markdown("---")
-
-    # Get user input
     city = st.sidebar.text_input("Enter City Name", "Lahore")
     api_key = st.secrets.get("OPENWEATHER_API_KEY", "")
 
     if st.sidebar.button("Get Weather", type="primary"):
         if not api_key:
             st.error("Please configure your OpenWeatherMap API key in Streamlit secrets")
-            return
-
-        with st.spinner("Fetching weather data..."):
-            weather_data = get_weather_data(city, api_key)
-
-            if weather_data:
-                show_current_weather(weather_data)
-                show_forecast(weather_data)
-            else:
-                st.error("Could not fetch weather data. Please check the city name or try again later.")
-
+        else:
+            with st.spinner("Fetching weather data..."):
+                weather_data = get_weather_data(city, api_key)
+                
+                if weather_data:
+                    show_current_weather(weather_data)
+                    show_forecast(weather_data)
+                else:
+                    st.error("Could not fetch weather data. Please check the city name or try again later.")
 
 if __name__ == "__main__":
     main()
