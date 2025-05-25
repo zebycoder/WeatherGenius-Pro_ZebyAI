@@ -6,7 +6,8 @@ import plotly.express as px
 from datetime import datetime
 import pytz
 import base64
-
+# requirements.txt must be EXACTLY named and in root folder
+__import__('pkg_resources').require(open('requirements.txt').read())
 # =============================================
 # APP CONFIGURATION
 # =============================================
